@@ -315,6 +315,20 @@ echo sprintf(
                     <span class="description"><?php _e( 'Specify the IP addresses of your varnish instances above. The <acronym title="Varnish Configuration Language">VCL</acronym>\'s <acronym title="Access Control List">ACL</acronym> must allow this request.', 'w3-total-cache' ); ?></span>
                 </td>
             </tr>
+			<tr>
+				<th><label for="pgcache_varnish_purge_key_header"><?php Util_Ui::e_config_label( 'varnish.purge_key_header' ) ?></label></th>
+				<td>
+					<input type="text" id="pgcache_varnish_purge_key_header" name="varnish__purge_key_header" size="45" <?php Util_Ui::sealing_disabled( 'varnish.' ); ?> value="<?php echo esc_textarea( implode( "\r\n", $this->_config->get_array( 'varnish.purge_key_header' ) ) ); ?>"/><br />
+					<span class="description"><?php _e( 'Specify the purge key header sent to varnish instances.', 'w3-total-cache' ); ?></span>
+				</td>
+			</tr>
+			<tr>
+				<th><label for="pgcache_varnish_purge_key"><?php Util_Ui::e_config_label( 'varnish.purge_key' ) ?></label></th>
+				<td>
+					<input type="text" id="pgcache_varnish_purge_key" name="varnish__purge_key" size="45" <?php Util_Ui::sealing_disabled( 'varnish.' ); ?> value="<?php echo esc_textarea( implode( "\r\n", $this->_config->get_array( 'varnish.purge_key' ) ) ); ?>"/><br />
+					<span class="description"><?php _e( 'Specify the key used to purge varnish instances. <em>X-W3TC-Purge-Key</em>.', 'w3-total-cache' ); ?></span>
+				</td>
+			</tr>
         </table>
 
         <?php
