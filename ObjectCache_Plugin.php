@@ -338,7 +338,6 @@ class ObjectCache_Plugin {
 	private function _do_flush() {
 		//TODO: Requires admin flush until OC can make changes in Admin backend
 		return $this->_config->get_boolean( 'cluster.messagebus.enabled' )
-			|| $this->_config->get_boolean( 'objectcache.purge.all' )
-			|| defined( 'WP_ADMIN' );
+			|| $this->_config->get_boolean( 'objectcache.purge.all' );
 	}
 }
