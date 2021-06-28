@@ -642,7 +642,7 @@ jQuery(function() {
 					'config[user]': jQuery('#cdn_ftp_user').val(),
 					'config[path]': jQuery('#cdn_ftp_path').val(),
 					'config[pass]': jQuery('#cdn_ftp_pass').val(),
-					'config[pasv]': jQuery('#cdn_ftp_pasv:checked').length,
+					'config[pasv]': jQuery('#cdn__ftp__pasv:checked').length,
 					'config[default_keys]': jQuery('#cdn__ftp__default_keys:checked').length,
 					'config[pubkey]': jQuery('#cdn_ftp_pubkey').val(),
 					'config[privkey]': jQuery('#cdn_ftp_privkey').val()
