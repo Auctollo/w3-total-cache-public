@@ -116,7 +116,6 @@ th.minify-files-add, td.minify-files-add {
 }
 .w3tc-overlay p, .w3tc-overlay label, .w3tc-overlay option {
     font-family:Arial, Verdana,sans-serif;
-    color:#88898a;
 }
 
 .w3tc-overlay p {
@@ -399,13 +398,8 @@ fieldset[disabled] .btn {
 padding: 10px 20px 20px 20px;
 }
 
-.w3tchelp_content h3 {
-    color: #7b7b7b;
-}
-
 .w3tchelp_content li {
     font-family: Arial, Verdana,sans-serif;
-    color: #88898a;
     font-size: 13px;
 }
 
