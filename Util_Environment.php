@@ -670,28 +670,33 @@ class Util_Environment {
 		return $uri;
 	}
 
-	/**
-	 * Returns server hostname with port
-	 *
-	 * @return string
-	 */
 	static public function host_port() {
-		static $host = null;
+		$config = Dispatcher::config();
+		$host_port = $config->get_string( 'host', $_SERVER['HTTP_HOST'] );
 
-		if ( $host === null ) {
-			if ( !empty( $_SERVER['HTTP_HOST'] ) ) {
-				// HTTP_HOST sometimes is not set causing warning
-				$host = $_SERVER['HTTP_HOST'];
-			} else {
-				$host = '';
-			}
+		if($host_port === null) {
+			$host_port = '';
 		}
 
-		return $host;
+		return $host_port;
 	}
 
 	static public function host() {
-		$host_port = Util_Environment::host_port();
+		$host_port = self::host_port(); 
+
+		$pos = strpos( $host_port, ':' );
+		if ( $pos === false )
+			return $host_port;
+
+		return substr( $host_port, 0, $pos );
+	}
+
+	static public function request_host() {
+		$host_port = $_SERVER['HTTP_HOST'];
+
+		if($host_port === null) {
+			return ''; 
+		}
 
 		$pos = strpos( $host_port, ':' );
 		if ( $pos === false )

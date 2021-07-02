@@ -189,7 +189,7 @@ class PgCache_Plugin {
 	}
 
 	public function redirect_on_foreign_domain() {
-		$request_host = Util_Environment::host();
+		$request_host = Util_Environment::request_host();
 		// host not known, potentially we are in console mode not http request
 		if ( empty( $request_host ) )
 			return;
