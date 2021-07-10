@@ -191,7 +191,7 @@ class PgCache_Plugin {
 	public function redirect_on_foreign_domain() {
 		$request_host = Util_Environment::host();
 		// host not known, potentially we are in console mode not http request
-		if ( empty( $request_host ) )
+		if ( empty( $request_host ) || defined( 'WP_CLI' ) && WP_CLI )
 			return;
 
 		$home_url = get_home_url();
