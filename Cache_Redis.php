@@ -62,6 +62,7 @@ class Cache_Redis extends Cache_Base {
 
 		$storage_key = $this->get_item_key( $key );
 		$accessor = $this->_get_accessor( $storage_key );
+		
 		if ( is_null( $accessor ) ) {
 			return false;
 		}
@@ -69,7 +70,6 @@ class Cache_Redis extends Cache_Base {
 		if ( ! $expire ) {
 			return $accessor->set( $storage_key, serialize( $value ) );
 		}
-
 		return $accessor->setex( $storage_key, $expire, serialize( $value ) );
 	}
 
@@ -331,7 +331,7 @@ class Cache_Redis extends Cache_Base {
 	}
 
 	private function _get_accessor( $key ) {
-		if ( count( $this->_servers ) <= 1 )
+		if ( count( $this->_servers ) <= 1 || ( defined( 'W3TC_REDIS_CLUSTER' ) && W3TC_REDIS_CLUSTER ) ) {
 			$index = 0;
 		else {
 			$index = crc32( $key ) % count( $this->_servers );
@@ -344,35 +344,41 @@ class Cache_Redis extends Cache_Base {
 			$this->_accessors[$index] = null;
 		else {
 			try {
-				$server = $this->_servers[$index];
-				$accessor = new \Redis();
-
-				if ( substr( $server, 0, 5 ) == 'unix:' ) {
-					if ( $this->_persistent ) {
-						$accessor->pconnect( trim( substr( $server, 5 ) ),
-							null, null, $this->_instance_id . '_' . $this->_dbid );
-					} else {
-						$accessor->connect( trim( substr( $server, 5 ) ) );
-					}
+				if ( defined( 'W3TC_REDIS_CLUSTER' ) && W3TC_REDIS_CLUSTER ) {
+					$accessor = new \RedisCluster(NULL, $this->_servers, 1.5, 1.5, $this->_persistent, $this->_password);
 				} else {
-					list( $ip, $port ) = Util_Content::endpoint_to_host_port( $server, null );
+					
+					$server = $this->_servers[$index];
+					$accessor = new \Redis();
 
-					if ( $this->_persistent ) {
-						$accessor->pconnect( $ip, $port,
-							null, $this->_instance_id . '_' . $this->_dbid );
+					if ( substr( $server, 0, 5 ) == 'unix:' ) {
+						if ( $this->_persistent ) {
+							$accessor->pconnect( trim( substr( $server, 5 ) ),
+								null, null, $this->_instance_id . '_' . $this->_dbid );
+						} else {
+							$accessor->connect( trim( substr( $server, 5 ) ) );
+						}
 					} else {
-						$accessor->connect( $ip, $port );
-					}
-				}
+						list( $ip, $port ) = Util_Content::endpoint_to_host_port( $server, null );
 
-				if ( !empty( $this->_password ) )
-					$accessor->auth( $this->_password );
-				$accessor->select( $this->_dbid );
+						if ( $this->_persistent ) {
+							$accessor->pconnect( $ip, $port,
+								null, $this->_instance_id . '_' . $this->_dbid );
+						} else {
+							$accessor->connect( $ip, $port );
+						}
+					}
+
+					if ( !empty( $this->_password ) )
+						$accessor->auth( $this->_password );
+					$accessor->select( $this->_dbid );
+
+				}
+				
 			} catch ( \Exception $e ) {
 				error_log( $e->getMessage() );
 				$accessor = null;
 			}
-
 			$this->_accessors[$index] = $accessor;
 		}
 

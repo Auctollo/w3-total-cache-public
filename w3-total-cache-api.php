@@ -131,6 +131,10 @@ if ( !defined( 'W3TC_FEED_REGEXP' ) ) {
 	define( 'W3TC_FEED_REGEXP', '~/feed(/|$)~' );
 }
 
+	// Set W3TC_REDIS_CLUSTER to true if using Redis in cluster mode 
+	if ( ! defined ( 'W3TC_REDIS_CLUSTER' ) ) {
+		define( 'W3TC_REDIS_CLUSTER', false );
+	}
 
 @ini_set( 'pcre.backtrack_limit', 4194304 );
 @ini_set( 'pcre.recursion_limit', 4194304 );

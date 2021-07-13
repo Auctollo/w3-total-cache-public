@@ -38,7 +38,7 @@ class Generic_AdminActions_Test {
 	 * @return void
 	 */
 	function w3tc_test_redis() {
-		$servers = Util_Request::get_array( 'servers' );
+		$servers    = Util_Request::get_array( 'servers' );
 		$password   = Util_Request::get_string('password', '');
 		$dbid       = Util_Request::get_integer( 'dbid', 0 );
 
@@ -47,25 +47,50 @@ class Generic_AdminActions_Test {
 		else {
 			$success = true;
 
-			foreach ( $servers as $server ) {
-				@$cache = Cache::instance( 'redis', array(
-						'servers' => $server,
-						'persistent' => false,
-						'password' => $password,
-						'dbid' => $dbid
-					) );
+			if ( defined( 'W3TC_REDIS_CLUSTER' ) && W3TC_REDIS_CLUSTER ) {
+				$config = array(
+					'servers' => $servers,
+					'persistent' => false,
+					'password' => $password,
+					'dbid' => $dbid
+				);
+
+				@$cache = Cache::instance( 'redis', $config );
+
 				if ( is_null( $cache ) )
 					$success = false;
 
+
 				$test_string = sprintf( 'test_' . md5( time() ) );
 				$test_value = array( 'content' => $test_string );
-				$cache->set( $test_string, $test_value, 60 );
-				$test_value = $cache->get( $test_string );
-				if ( $test_value['content'] != $test_string )
-					$success = false;
-			}
-		}
 
+				$cache->set( $test_string, $test_value, 60 );
+
+				$test_value = $cache->get( $test_string );
+				if ( $test_value['content'] != $test_string ) {
+					$success = false;
+				}
+			}	else {
+				foreach ( $servers as $server ) {
+					@$cache = Cache::instance( 'redis', array(
+							'servers' => $server,
+							'persistent' => false,
+							'password' => $password,
+							'dbid' => $dbid
+						) );
+					if ( is_null( $cache ) )
+						$success = false;
+	
+					$test_string = sprintf( 'test_' . md5( time() ) );
+					$test_value = array( 'content' => $test_string );
+					$cache->set( $test_string, $test_value, 60 );
+					$test_value = $cache->get( $test_string );
+					if ( $test_value['content'] != $test_string )
+						$success = false;
+				}
+			}
+			
+		}
 		$this->respond_test_result( $success );
 	}
 
